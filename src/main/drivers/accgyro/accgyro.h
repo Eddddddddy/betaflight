@@ -59,6 +59,7 @@ typedef enum {
     GYRO_ICM42688P,
     GYRO_BMI160,
     GYRO_BMI270,
+    GYRO_BMI088,
     GYRO_LSM6DSO,
     GYRO_LSM6DSV16X,
     GYRO_IIM42653,
@@ -128,6 +129,7 @@ typedef struct gyroDev_s {
     uint8_t hardware_32khz_lpf;
     uint8_t mpuDividerDrops;
     ioTag_t mpuIntExtiTag;
+    IO_t csnAccPin;                                          // BMI088 accelerometer CS pin
     uint8_t gyroHasOverflowProtection;
     gyroHardware_e gyroHardware;
     matrix33_t rotationMatrix;
@@ -141,6 +143,7 @@ typedef struct accDev_s {
 #if defined(SIMULATOR_BUILD) && defined(SIMULATOR_MULTITHREAD)
     pthread_mutex_t lock;
 #endif
+    extDevice_t dev;                                          // SPI device for sensors with separate acc device (e.g. BMI088)
     float acc_1G_rec;
     sensorAccInitFuncPtr initFn;                              // initialize function
     sensorAccReadFuncPtr readFn;                              // read 3 axis data function

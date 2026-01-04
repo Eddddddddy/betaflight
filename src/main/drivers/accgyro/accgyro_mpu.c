@@ -47,6 +47,7 @@
 #include "drivers/accgyro/accgyro_mpu6500.h"
 #include "drivers/accgyro/accgyro_spi_bmi160.h"
 #include "drivers/accgyro/accgyro_spi_bmi270.h"
+#include "drivers/accgyro/accgyro_spi_bmi088.h"
 #include "drivers/accgyro/accgyro_spi_icm20649.h"
 #include "drivers/accgyro/accgyro_spi_icm20689.h"
 #include "drivers/accgyro/accgyro_spi_icm426xx.h"
@@ -367,6 +368,9 @@ static gyroSpiDetectFn_t gyroSpiDetectFnTable[] = {
 #ifdef USE_ACCGYRO_BMI270
     bmi270Detect,
 #endif
+#ifdef USE_ACCGYRO_BMI088
+    bmi088SpiDetect,
+#endif
 #if defined(USE_GYRO_SPI_ICM42605) || defined(USE_GYRO_SPI_ICM42688P) || defined(USE_ACCGYRO_IIM42653)
     icm426xxSpiDetect,
 #endif
@@ -412,6 +416,13 @@ static bool detectSPISensorsAndUpdateDetectionResult(gyroDev_t *gyro, const gyro
         uint8_t sensor = (gyroSpiDetectFnTable[index])(&gyro->dev);
         if (sensor != MPU_NONE) {
             gyro->mpuDetectionResult.sensor = sensor;
+            // Initialize BMI088 accelerometer CS pin if configured
+            if (config->csnAccTag) {
+                gyro->csnAccPin = IOGetByTag(config->csnAccTag);
+                IOInit(gyro->csnAccPin, OWNER_ACC_CS, RESOURCE_INDEX(config->index));
+                IOConfigGPIO(gyro->csnAccPin, SPI_IO_CS_CFG);
+                IOHi(gyro->csnAccPin);
+            }
             busDeviceRegister(&gyro->dev);
             return true;
         }

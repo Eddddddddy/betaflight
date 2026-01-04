@@ -61,6 +61,7 @@ static const char * const ownerNames[] = {
     "FLASH_CS",
     "BARO_CS",
     "GYRO_CS",
+    "ACC_CS",
     "OSD_CS",
     "RX_SPI_CS",
     "SPI_CS",

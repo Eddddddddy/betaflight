@@ -57,6 +57,7 @@ typedef enum {
     OWNER_FLASH_CS,
     OWNER_BARO_CS,
     OWNER_GYRO_CS,
+    OWNER_ACC_CS,
     OWNER_OSD_CS,
     OWNER_RX_SPI_CS,
     OWNER_SPI_CS,
