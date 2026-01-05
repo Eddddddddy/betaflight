@@ -57,6 +57,12 @@ uint16_t gyroSetSampleRate(gyroDev_t *gyro)
             gyroSampleRateHz = 3200;
             accSampleRateHz = 800;
             break;
+        case BMI_088_SPI:
+            // BMI088 gyro max ODR is 2kHz (lower than BMI270's 3.2kHz)
+            gyro->gyroRateKHz = GYRO_RATE_3200_Hz;  // Use closest available enum
+            gyroSampleRateHz = 2000;                 // Actual rate is 2kHz
+            accSampleRateHz = 800;
+            break;
         case BMI_270_SPI:
 #ifdef USE_GYRO_DLPF_EXPERIMENTAL
             if (gyro->hardware_lpf == GYRO_HARDWARE_LPF_EXPERIMENTAL) {

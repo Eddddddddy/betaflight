@@ -47,6 +47,10 @@
 #define GYRO_1_CLKIN_PIN NONE
 #endif
 
+#ifndef GYRO_1_ACC_CS_PIN
+#define GYRO_1_ACC_CS_PIN NONE
+#endif
+
 #ifndef GYRO_2_CS_PIN
 #define GYRO_2_CS_PIN NONE
 #endif
@@ -57,6 +61,10 @@
 
 #ifndef GYRO_2_CLKIN_PIN
 #define GYRO_2_CLKIN_PIN NONE
+#endif
+
+#ifndef GYRO_2_ACC_CS_PIN
+#define GYRO_2_ACC_CS_PIN NONE
 #endif
 
 #ifndef GYRO_3_CS_PIN
@@ -71,6 +79,10 @@
 #define GYRO_3_CLKIN_PIN NONE
 #endif
 
+#ifndef GYRO_3_ACC_CS_PIN
+#define GYRO_3_ACC_CS_PIN NONE
+#endif
+
 #ifndef GYRO_4_CS_PIN
 #define GYRO_4_CS_PIN NONE
 #endif
@@ -81,6 +93,10 @@
 
 #ifndef GYRO_4_CLKIN_PIN
 #define GYRO_4_CLKIN_PIN NONE
+#endif
+
+#ifndef GYRO_4_ACC_CS_PIN
+#define GYRO_4_ACC_CS_PIN NONE
 #endif
 
 #ifdef MPU_ADDRESS
@@ -217,11 +233,12 @@ STATIC_ASSERT(GYRO_4_ALIGN == ALIGN_CUSTOM, "GYRO_4_ALIGN and GYRO_4_CUSTOM_ALIG
 #endif // GYRO_4_CUSTOM_ALIGN
 
 #if defined(USE_SPI_GYRO) && (defined(GYRO_1_SPI_INSTANCE) || defined(GYRO_2_SPI_INSTANCE))
-static void gyroResetSpiDeviceConfig(gyroDeviceConfig_t *devconf, SPI_TypeDef *instance, ioTag_t csnTag, ioTag_t extiTag, ioTag_t clkInTag, uint8_t alignment, sensorAlignment_t customAlignment)
+static void gyroResetSpiDeviceConfig(gyroDeviceConfig_t *devconf, SPI_TypeDef *instance, ioTag_t csnTag, ioTag_t csnAccTag, ioTag_t extiTag, ioTag_t clkInTag, uint8_t alignment, sensorAlignment_t customAlignment)
 {
     devconf->busType = BUS_TYPE_SPI;
     devconf->spiBus = SPI_DEV_TO_CFG(spiDeviceByInstance(instance));
     devconf->csnTag = csnTag;
+    devconf->csnAccTag = csnAccTag;  // BMI088 accelerometer CS pin
     devconf->extiTag = extiTag;
     devconf->alignment = alignment;
     devconf->customAlignment = customAlignment;
@@ -251,7 +268,7 @@ void pgResetFn_gyroDeviceConfig(gyroDeviceConfig_t *devconf)
 
 #define GYRO_RESET(index, num) \
     gyroResetSpiDeviceConfig(&devconf[index], GYRO_##num##_SPI_INSTANCE, \
-        IO_TAG(GYRO_##num##_CS_PIN), IO_TAG(GYRO_##num##_EXTI_PIN), \
+        IO_TAG(GYRO_##num##_CS_PIN), IO_TAG(GYRO_##num##_ACC_CS_PIN), IO_TAG(GYRO_##num##_EXTI_PIN), \
         IO_TAG(GYRO_##num##_CLKIN_PIN), GYRO_##num##_ALIGN, GYRO_##num##_CUSTOM_ALIGN)
 
 #ifdef GYRO_1_SPI_INSTANCE
